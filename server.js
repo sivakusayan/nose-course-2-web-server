@@ -4,6 +4,7 @@ const fs = require('fs');
 
 const port = process.env.PORT || 3000;
 const app = express();
+let counter = 0;
 
 hbs.registerPartials(__dirname + '/views/partials');
 app.set('view engine', 'hbs');
@@ -17,6 +18,11 @@ app.use((req, res, next) => {
       console.log('Unable to append to server.log');
     }
   });
+  next();
+});
+
+app.use((req, res, next) => {
+  counter += 1;
   next();
 });
 
@@ -50,6 +56,13 @@ app.get('/about', (req, res) => {
     pageTitle: 'About Page',
   });
 });
+
+app.get('/requestCount', (req, res) => {
+  res.render('requestCount.hbs', {
+    numberOfRequests: counter,
+    pageTitle: 'Request Counter',
+  })
+})
 
 app.get('/bad', (req, res) => {
   res.send({
